@@ -87,10 +87,12 @@ class test_basemodel(unittest.TestCase):
             pycostyle = pycodestyle.StyleGuide(quiet=True)
             result = pycostyle.check_files(["models/base_model.py"])
             self.assertEqual(
-                result.total_errors, 0, "Found code style errors (and warnings)."
+                result.total_errors, 0,
+                "Found code style errors (and warnings)."
             )
         except Exception as e:
-            # Handle any exceptions raised during the code style testing process
+            # Handle any exceptions raised during the
+            # code style testing process
             print("An error occurred during code style testing:", e)
 
     def setUp(self):
@@ -100,7 +102,8 @@ class test_basemodel(unittest.TestCase):
         This method is executed before each test case in the test class.
 
         Exceptions:
-        - Any exceptions raised during the setup process will cause the test case to fail.
+        - Any exceptions raised during the setup
+        process will cause the test case to fail.
         """
 
         try:
@@ -112,12 +115,14 @@ class test_basemodel(unittest.TestCase):
 
     def tearDown(self):
         """
-        Clean up resources or perform necessary actions after the test cases have run.
+        Clean up resources or perform necessary
+        actions after the test cases have run.
 
         This method is executed after each test case in the test class.
 
         Exceptions:
-        - Any exceptions raised during the tear-down process will be caught and ignored.
+        - Any exceptions raised during the tear-down
+        process will be caught and ignored.
         """
 
         try:
@@ -143,7 +148,8 @@ class test_basemodel(unittest.TestCase):
 
         try:
             # Add your test code here
-            # For example, you can create an instance of the class and call the value() method
+            # For example, you can create an instance of the
+            class and call the value() method
             i = self.value()
             self.assertEqual(type(i), self.value)
         except AssertionError as e:
@@ -153,7 +159,8 @@ class test_basemodel(unittest.TestCase):
                 "The value() method did not return the expected type."
             ) from e
         except Exception as e:
-            # Handle other unexpected exceptions that may occur during the test
+            # Handle other unexpected exceptions
+            # that may occur during the test
             # Log the exception or perform any necessary actions
             raise Exception("An error occurred during the test.") from e
 
@@ -161,17 +168,21 @@ class test_basemodel(unittest.TestCase):
         """
         Test the creation of a new instance using keyword arguments.
 
-        This method verifies that a new instance of the class can be created
+        This method verifies that a new instance of
+        the class can be created
         by passing keyword arguments obtained from the `to_dict()` method.
-        It checks that the new instance is not the same as the original instance.
+        It checks that the new instance is not the
+        same as the original instance.
 
         Exceptions:
-        - AssertionError: If the new instance is the same as the original instance.
+        - AssertionError: If the new instance is the
+        same as the original instance.
         """
 
         try:
             # Add your test code here
-            # For example, create an instance, convert it to a dict, and create a new instance using kwargs
+            # For example, create an instance, convert it to a dict,
+            # and create a new instance using kwargs
             i = self.value()
             copy = i.to_dict()
             new = BaseModel(**copy)
@@ -189,9 +200,11 @@ class test_basemodel(unittest.TestCase):
 
     def test_kwargs_int(self):
         """
-        Test the creation of a new instance using keyword arguments with an invalid type.
+        Test the creation of a new instance using
+        keyword arguments with an invalid type.
 
-        This method verifies that when an invalid type is provided as a keyword argument,
+        This method verifies that when an invalid
+        type is provided as a keyword argument,
         a TypeError is raised.
 
         Exceptions:
@@ -200,7 +213,8 @@ class test_basemodel(unittest.TestCase):
 
         try:
             # Add your test code here
-            # For example, create an instance, convert it to a dict, update with an invalid type,
+            # For example, create an instance,
+            # convert it to a dict, update with an invalid type,
             # and create a new instance using kwargs
             i = self.value()
             copy = i.to_dict()
@@ -210,7 +224,8 @@ class test_basemodel(unittest.TestCase):
         except AssertionError as e:
             # Handle the assertion error
             # Log the error or perform any necessary actions
-            raise AssertionError("The expected TypeError was not raised.") from e
+            raise AssertionError("The expected TypeError
+                                 was not raised.") from e
         except Exception as e:
             # Handle other unexpected exceptions that may occur during the test
             # Log the exception or perform any necessary actions
@@ -220,18 +235,22 @@ class test_basemodel(unittest.TestCase):
         """
         Test the save method.
 
-        This method verifies that the save method correctly saves the instance
+        This method verifies that the save method
+        correctly saves the instance
         to a file, and the saved data matches the expected data.
 
         Exceptions:
-        - AssertionError: If the saved data does not match the expected data.
+        - AssertionError: If the saved data
+        - does not match the expected data.
         - FileNotFoundError: If the 'file.json' file does not exist.
-        - JSONDecodeError: If an error occurs while loading the JSON data from the file.
+        - JSONDecodeError: If an error occurs while
+          loading the JSON data from the file.
         """
 
         try:
             # Add your test code here
-            # For example, create an instance, call the save method, and check the saved data
+            # For example, create an instance, call the save method,
+            # and check the saved data
             i = self.value()
             i.save()
             key = self.name + "." + i.id
@@ -250,7 +269,8 @@ class test_basemodel(unittest.TestCase):
         except JSONDecodeError as e:
             # Handle the JSON decode error
             # Log the error or perform any necessary actions
-            raise JSONDecodeError("Error while loading JSON data from the file.") from e
+            raise JSONDecodeError("Error while loading
+                                  JSON data from the file.") from e
         except Exception as e:
             # Handle other unexpected exceptions that may occur during the test
             # Log the exception or perform any necessary actions
@@ -302,9 +322,9 @@ class test_basemodel(unittest.TestCase):
         except AssertionError as e:
             # Handle the assertion error
             # Log the error or perform any necessary actions
-            raise AssertionError(
-                "The returned dictionary does not match the original dictionary."
-            ) from e
+            raise AssertionError("The returned dictionary does
+                                 not match the original dictionary."
+                                 ) from e
         except Exception as e:
             # Handle other unexpected exceptions that may occur during the test
             # Log the exception or perform any necessary actions
@@ -312,9 +332,11 @@ class test_basemodel(unittest.TestCase):
 
     def test_kwargs_none(self):
         """
-        Test the creation of a new instance using keyword arguments with None values.
+        Test the creation of a new instance
+        using keyword arguments with None values.
 
-        This method verifies that when None values are provided as keyword arguments,
+        This method verifies that when None values
+        are provided as keyword arguments,
         a TypeError is raised.
 
         Exceptions:
@@ -328,7 +350,8 @@ class test_basemodel(unittest.TestCase):
         except AssertionError as e:
             # Handle the assertion error
             # Log the error or perform any necessary actions
-            raise AssertionError("The expected TypeError was not raised.") from e
+            raise AssertionError("The expected
+                                 TypeError was not raised.") from e
         except Exception as e:
             # Handle other unexpected exceptions that may occur during the test
             # Log the exception or perform any necessary actions
@@ -338,7 +361,8 @@ class test_basemodel(unittest.TestCase):
         """
         Test the id attribute.
 
-        This method verifies that the id attribute of the instance is of type str.
+        This method verifies that the id attribute
+        of the instance is of type str.
 
         Exceptions:
         - AssertionError: If the id attribute is not of type str.
@@ -346,7 +370,8 @@ class test_basemodel(unittest.TestCase):
 
         try:
             # Add your test code here
-            # For example, create an instance and check the type of the id attribute
+            # For example, create an instance and
+            # check the type of the id attribute
             new = self.value()
             self.assertEqual(type(new.id), str)
         except AssertionError as e:
@@ -366,18 +391,21 @@ class test_basemodel(unittest.TestCase):
         instance is of type datetime.datetime.
 
         Exceptions:
-        - AssertionError: If the created_at attribute is not of type datetime.datetime.
+        - AssertionError: If the created_at attribute
+        is not of type datetime.datetime.
         """
 
         try:
             # Add your test code here
-            # For example, create an instance and check the type of the created_at attribute
+            # For example, create an instance and check
+            the type of the created_at attribute
             new = self.value()
             self.assertEqual(type(new.created_at), datetime.datetime)
         except AssertionError as e:
             # Handle the assertion error
             # Log the error or perform any necessary actions
-            raise AssertionError("The created_at attribute is not of type datetime.
+            raise AssertionError("The created_at attribute is
+                                 not of type datetime.
                                  datetime.") from e
         except Exception as e:
             # Handle other unexpected exceptions that may occur during the test
@@ -402,8 +430,10 @@ class test_basemodel(unittest.TestCase):
 
         try:
             # Add your test code here
-            # For example, create an instance, check the type of the updated_at attribute,
-            # convert it to a dictionary, create a new instance using the dictionary,
+            # For example, create an instance,
+            # check the type of the updated_at attribute,
+            # convert it to a dictionary, create
+            # a new instance using the dictionary,
             and compare created_at and updated_at
             new = self.value()
             self.assertEqual(type(new.updated_at), datetime.datetime)
@@ -413,8 +443,10 @@ class test_basemodel(unittest.TestCase):
         except AssertionError as e:
             # Handle the assertion error
             # Log the error or perform any necessary actions
-            raise AssertionError("The updated_at attribute is not of type datetime.datetime,
-                    or the values of created_at and updated_at are the same.") from e
+            raise AssertionError("The updated_at attribute is not
+                                 of type datetime.datetime,
+                                 or the values of created_at
+                                 and updated_at are the same.") from e
         except Exception as e:
             # Handle other unexpected exceptions that may occur during the test
             # Log the exception or perform any necessary actions
@@ -424,7 +456,8 @@ class test_basemodel(unittest.TestCase):
         """
         Test the UUID generation.
 
-        This method verifies that the UUID generated for each instance is of type str
+        This method verifies that the UUID
+        generated for each instance is of type str
         and that the UUIDs generated for different instances are unique.
 
         Exceptions:
@@ -434,7 +467,8 @@ class test_basemodel(unittest.TestCase):
 
         try:
             # Add your test code here
-            # For example, create multiple instances, check the type of their UUIDs,
+            # For example, create multiple instances,
+            # check the type of their UUIDs,
             # and ensure the UUIDs are unique
             instance1 = BaseModel()
             instance2 = BaseModel()
@@ -452,9 +486,9 @@ class test_basemodel(unittest.TestCase):
         except AssertionError as e:
             # Handle the assertion error
             # Log the error or perform any necessary actions
-            raise AssertionError(
-                "The UUID is not of type str or the generated UUIDs are not unique."
-            ) from e
+            raise AssertionError("The UUID is not of type str or the
+                                 generated UUIDs are not unique."
+                                 ) from e
         except Exception as e:
             # Handle other unexpected exceptions that may occur during the test
             # Log the exception or perform any necessary actions
@@ -474,7 +508,8 @@ class test_basemodel(unittest.TestCase):
 
         try:
             # Add your test code here
-            # For example, create an instance and compare its string representation
+            # For example, create an instance and
+            # compare its string representation
             instance6 = BaseModel()
             expected_str = "[BaseModel] ({}) {}".format(
                 instance6.id, instance6.__dict__
@@ -585,7 +620,8 @@ class TestBaseModel(unittest.TestCase):
         """
         Test for existence of docstrings in BaseModel.
 
-        This method checks if the BaseModel class and its methods have docstrings.
+        This method checks if the BaseModel class and
+        its methods have docstrings.
         It verifies that the docstrings are not None.
 
         Exceptions:
@@ -627,11 +663,13 @@ class TestBaseModel(unittest.TestCase):
         """
         Test if the base object is an instance of BaseModel.
 
-        This method checks if the base object created in the setUpClass() method
+        This method checks if the base object
+        created in the setUpClass() method
         is an instance of the BaseModel class.
 
         Exceptions:
-        - AssertionError: If the base object is not an instance of BaseModel.
+        - AssertionError:
+        If the base object is not an instance of BaseModel.
         """
 
         try:
@@ -663,13 +701,16 @@ class TestBaseModel(unittest.TestCase):
 
     def test_to_dict_BaseModel(self):
         """
-        Test if the to_dict() method returns a dictionary with the expected attributes.
+        Test if the to_dict() method returns
+        a dictionary with the expected attributes.
 
-        This method tests if the to_dict() method of the BaseModel class returns
+        This method tests if the to_dict() method of the
+        BaseModel class returns
         a dictionary with the expected attributes and their respective values.
 
         Exceptions:
-        - AssertionError: If any of the conditions for the expected attributes fail.
+        - AssertionError: If any of the conditions
+        for the expected attributes fail.
         """
 
         try:

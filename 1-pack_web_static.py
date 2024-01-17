@@ -23,29 +23,20 @@ from fabric.api import local
 
 def do_pack():
     """Create a tar gzipped archive of the directory web_static."""
-    # New variables
-    dir_name = "versions"
-    static_dir = "web_static"
-
-    dt = datetime.utcnow()
-    file_name = "{}_{}{}{}{}{}{}.tgz".format(static_dir,
-                                             dt.year,
-                                             dt.month,
-                                             dt.day,
-                                             dt.hour,
-                                             dt.minute,
-                                             dt.second)
-    file_path = os.path.join(dir_name, file_name)
-
-    if not os.path.exists(dir_name):
-        mkdir_command = "mkdir -p {}".format(dir_name)
-        result = local(mkdir_command)
-        if result.failed:
+    try:
+        dt = datetime.utcnow()
+        dir_name = "versions"
+        file = "versions/web_static_{}{}{}{}{}{}.tgz".format(dt.year,
+                                                             dt.month,
+                                                             dt.day,
+                                                             dt.hour,
+                                                             dt.minute,
+                                                             dt.second)
+        if os.path.isdir(dir_name) is False:
+            if local("mkdir -p versions").failed is True:
+                return None
+        if local("tar -cvzf {} web_static".format(file)).failed is True:
             return None
-
-    tar_command = "tar -cvzf {} {}".format(file_path, static_dir)
-    result = local(tar_command)
-    if result.failed:
-        return None
-
-    return file_path
+        return file
+    except Exception as e:
+        print(f"An error occurred: {e}")
