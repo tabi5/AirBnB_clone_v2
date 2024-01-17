@@ -9,8 +9,8 @@ from models.review import Review
 
 
 class User(BaseModel, Base):
-    """This is the class for user.
-
+    """
+    This is the class for user
     Attributes:
         email (str): The email address of the user.
         password (str): The password for the user's login.
@@ -20,20 +20,17 @@ class User(BaseModel, Base):
         reviews (relationship): A one-to-many relationship with Review objects.
     """
 
-    __tablename__ = "users"
-    VarReview = "Review"
-    VarPlace = "Review"
-    varuser = "user"
-
     try:
+        __tablename__ = "users"
         email = Column(String(128), nullable=False)
         password = Column(String(128), nullable=False)
         first_name = Column(String(128))
         last_name = Column(String(128))
-
-        places = relationship(VarPlace, cascade="all, delete, delete-orphan",
-                              backref=varuser)
-        reviews = relationship(VarReview, cascade="all, delete, delete-orphan",
-                               backref=varuser)
+        places = relationship(
+            "Place", cascade="all, delete, delete-orphan", backref="user"
+        )
+        reviews = relationship(
+            "Review", cascade="all, delete, delete-orphan", backref="user"
+        )
     except Exception as e:
         print(f"An error occurred: {e}")
