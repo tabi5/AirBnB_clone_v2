@@ -29,7 +29,8 @@ place_amenity = Table(
 
 
 class Place(BaseModel, Base):
-    """This is the class for Place.
+    """
+    This is the class for Place.
 
     Attributes:
         city_id (str): The ID of the city associated with the place.
@@ -47,18 +48,12 @@ class Place(BaseModel, Base):
         representing the reviews of the place.
         amenities (relationship): A relationship to the Amenity model,
         representing the amenities of the place.
+
     """
 
-    vartname = "places"
-    __tablename__ = vartname
-    varcitiesid = "cities.id"
-    varusersid = "users.id"
-    varAmenity = "Amenity"
-    varplace_amenities = "place_amenities"
-
-    varReview = Review
-    city_id = Column(String(60), ForeignKey(varcitiesid), nullable=False)
-    user_id = Column(String(60), ForeignKey(varusersid), nullable=False)
+    __tablename__ = "places"
+    city_id = Column(String(60), ForeignKey("cities.id"), nullable=False)
+    user_id = Column(String(60), ForeignKey("users.id"), nullable=False)
     name = Column(String(128), nullable=False)
     description = Column(String(1024))
     number_rooms = Column(Integer, nullable=False, default=0)
@@ -71,49 +66,28 @@ class Place(BaseModel, Base):
 
     if getenv("HBNB_TYPE_STORAGE") == "db":
         reviews = relationship(
-            varReview, cascade="all, delete, delete-orphan", backref="place"
+            "Review", cascade="all, delete, delete-orphan", backref="place"
         )
+
         amenities = relationship(
-            varAmenity,
+            "Amenity",
             secondary=place_amenity,
             viewonly=False,
-            back_populates=varplace_amenities,
+            back_populates="place_amenities",
         )
     else:
-        # Code for file storage
+
         @property
         def reviews(self):
-            """Returns list of reviews.id"""
-            all_objects = models.storage.all()
-            review_objects = []
-            result = []
-            for key in all_objects:
-                split_key = key.replace(".", " ")
-                split_key = shlex.split(split_key)
-                if split_key[0] == "Review":
-                    review_objects.append(all_objects[key])
-            for review in review_objects:
-                if review.place_id == self.id:
-                    result.append(review)
-            return result
-        def reviews(self):
-            """
-            Returns a list of reviews from reviews.id.
-
-            Returns:
-                - result (list): List of review objects associated with the current object.
-
-            Exceptions:
-                - Exception: If an error occurs during the retrieval of reviews.
-            """
+            """Returns the list of reviews.id"""
             try:
                 var = models.storage.all()
                 lista = []
                 result = []
                 for key in var:
-                    review = key.replace('.', ' ')
+                    review = key.replace(".", " ")
                     review = shlex.split(review)
-                    if review[0] == 'Review':
+                    if review[0] == "Review":
                         lista.append(var[key])
                 for elem in lista:
                     if elem.place_id == self.id:
@@ -124,7 +98,7 @@ class Place(BaseModel, Base):
 
         @property
         def amenities(self):
-            """Returns a list of amenity IDs associated with the instance."""
+            """Returns the list of amenity ids"""
             try:
                 return self.amenity_ids
             except Exception as e:
@@ -132,25 +106,9 @@ class Place(BaseModel, Base):
 
         @amenities.setter
         def amenities(self, obj=None):
-            """
-            Appends amenity ids to the attribute.
-
-            Description:
-                Appends the id of an Amenity object to the amenity_ids attribute.
-
-            Parameters:
-                - obj (Amenity, optional): An instance of the Amenity class.
-
-            Exceptions:
-                - TypeError: If obj is not an instance of the Amenity class or if obj is None.
-                - AttributeError: If obj does not have an 'id' attribute.
-            """
-         
+            """Appends the amenity ids to the attribute"""
             try:
-                is_obj_amenity = type(obj) is Amenity
-                is_obj_id_not_in_amenity_ids = obj.id not in self.amenity_ids
-
-                if is_obj_amenity and is_obj_id_not_in_amenity_ids:
+                if type(obj) is Amenity and obj.id not in self.amenity_ids:
                     self.amenity_ids.append(obj.id)
             except Exception as e:
                 print(f"An error occurred: {e}")
