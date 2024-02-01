@@ -19,61 +19,34 @@
 #   - False: If the file doesn't exist at archive_path or
 # an error occurs during the deployment.
 #   - True: If the deployment is successful.
+from fabric.api import *
+import os.path
 
-import os
-from fabric.api import env, put, run
-
-# Hosts
-env.hosts = ["104.196.168.90", "35.196.46.172"]
-
+env.hosts = ["54.90.51.191", "52.3.251.97"]  # Replace with your web server IPs
 
 def do_deploy(archive_path):
-    """Distributes an archive to a web server.
+    """Deploys the specified archive to web servers."""
 
-    Args:
-        archive_path (str): The path of the archive to distribute.
-
-    Returns:
-        - False: If the file doesn't exist at archive_path or
-          an error occurs during the deployment.
-        - True: If the deployment is successful.
-    """
-    # New variables
-    tmp_dir = "/tmp"
-    release_dir = "/data/web_static/releases"
-    current_dir = "/data/web_static/current"
-
-    if not os.path.isfile(archive_path):
+    if not os.path.exists(archive_path):
         return False
 
-    file = os.path.basename(archive_path)
-    name, ext = os.path.splitext(file)
+    with settings(warn_only=True):
+        result = put(archive_path, "/tmp/")
+        if result.failed:
+            return False
 
-    if put(archive_path, os.path.join(tmp_dir, file)).failed:
-        return False
-    if run(f"rm -rf {os.path.join(release_dir, name)}").failed:
-        return False
-    if run(f"mkdir -p {os.path.join(release_dir, name)}").failed:
-        return False
-    command = f"tar -xzf {os.path.join(tmp_dir, file)} -C " \
-              f"{os.path.join(release_dir, name)}"
-    if run(command).failed:
-        return False
-    # Handle the case when the command fails
-    # Add your code here
-    """if run(f"tar -xzf {os.path.join(tmp_dir, file)} -C
-           {os.path.join(release_dir, name)}").failed:
-    """
-    if run(f"rm {os.path.join(tmp_dir, file)}").failed:
-        return False
-    if run(f"mv {os.path.join(release_dir, name, 'web_static', '*')}
-           {os.path.join(release_dir, name)}").failed:
-        return False
-    if run(f"rm -rf {os.path.join(release_dir, name, 'web_static')}").failed:
-        return False
-    if run(f"rm -rf {current_dir}").failed:
-        return False
-    if run(f"ln -s {os.path.join(release_dir, name)} {current_dir}").failed:
-        return False
+    with cd("/data/web_static/releases"):
+        archive_filename = os.path.basename(archive_path)
+        release_dirname = archive_filename.replace(".tgz", "")
+        run("mkdir -p " + release_dirname)
+        run("tar -xzf /tmp/" + archive_filename + " -C " + release_dirname)
+        run("rm /tmp/" + archive_filename)
 
+        # Additional commands specific to your archive structure
+        run("mv " + release_dirname + "/web_static/* " + release_dirname)
+        run("rm -rf " + release_dirname + "/web_static")
+
+    run("rm -rf /data/web_static/current")
+    run("ln -s /data/web_static/releases/" + release_dirname + " /data/web_static/current")
+    print("New version deployed!")
     return True
