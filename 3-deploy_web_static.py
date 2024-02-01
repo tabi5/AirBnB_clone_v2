@@ -9,7 +9,7 @@ from datetime import datetime
 from os.path import exists
 from fabric.api import local
 
-env.hosts = ["54.90.51.191", "52.3.251.97"] 
+env.hosts = ["54.90.51.191", "52.3.251.97"]
 
 
 def do_pack():
@@ -50,7 +50,8 @@ def do_deploy(archive_path):
 
         print("New version deployed!")
         return True
-    except:
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
         return False
 
 
