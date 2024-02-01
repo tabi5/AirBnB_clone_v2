@@ -16,37 +16,43 @@
 #   - archive_path (str): The path of the archive to distribute.
 #
 # Returns:
-#   - False: If the file doesn't exist at archive_path or
+#   - False: If the file doesn"t exist at archive_path or
 # an error occurs during the deployment.
 #   - True: If the deployment is successful.
-from fabric.api import *
-import os.path
 
-env.hosts = ["54.90.51.191", "52.3.251.97"]  # Replace with your web server IPs
+
+from datetime import datetime
+from fabric.api import env, put, run
+from os.path import exists
+
+env.hosts = ["54.90.51.191", "52.3.251.97"]
+
 
 def do_deploy(archive_path):
-    """Deploys the specified archive to web servers."""
-
-    if not os.path.exists(archive_path):
+    """Distributes an archive to the web servers"""
+    if not exists(archive_path):
         return False
 
-    with settings(warn_only=True):
-        result = put(archive_path, "/tmp/")
-        if result.failed:
-            return False
+    try:
+        # Upload the archive to the /tmp/ directory of the web server
+        put(archive_path, "/tmp/")
 
-    with cd("/data/web_static/releases"):
-        archive_filename = os.path.basename(archive_path)
-        release_dirname = archive_filename.replace(".tgz", "")
-        run("mkdir -p " + release_dirname)
-        run("tar -xzf /tmp/" + archive_filename + " -C " + release_dirname)
-        run("rm /tmp/" + archive_filename)
+        # Uncompress the archive to the folder
+        archive_filename = archive_path.split("/")[-1]
+        folder_name = "/data/web_static/releases/" + archive_filename[:-4]
+        run("mkdir -p {}".format(folder_name))
+        run("tar -xzf /tmp/{} -C {}".format(archive_filename, folder_name))
+        run("rm /tmp/{}".format(archive_filename))
+        run("mv {}/web_static/* {}".format(folder_name, folder_name))
+        run("rm -rf {}/web_static".format(folder_name))
 
-        # Additional commands specific to your archive structure
-        run("mv " + release_dirname + "/web_static/* " + release_dirname)
-        run("rm -rf " + release_dirname + "/web_static")
+        # Delete the symbolic link /data/web_static/current
+        run("rm -rf /data/web_static/current")
 
-    run("rm -rf /data/web_static/current")
-    run("ln -s /data/web_static/releases/" + release_dirname + " /data/web_static/current")
-    print("New version deployed!")
-    return True
+        # Create a new the symbolic link /data/web_static/current
+        run("ln -s {} /data/web_static/current".format(folder_name))
+
+        print("New version deployed!")
+        return True
+    except:
+        return False
