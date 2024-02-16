@@ -49,12 +49,15 @@ class HBNBCommand(cmd.Cmd):
         """
         Prints if isatty is false
         """
-        # New variable to store the status of the standard input
-        is_interactive = sys.__stdin__.isatty()
+        try:
+            # New variable to store the status of the standard input
+            is_interactive = sys.__stdin__.isatty()
 
-        # Check if the standard input is not interactive
-        if not is_interactive:
-            print("(hbnb)")
+            # Check if the standard input is not interactive
+            if not is_interactive:
+                print("(hbnb)")
+        except Exception as e:
+            print(f"An error occurred: {e}")
 
     def precmd(self, line):
         """
@@ -83,12 +86,12 @@ class HBNBCommand(cmd.Cmd):
                 _cls = pline[: pline.find(".")]
 
                 # Isolate and validate <command>
-                _cmd = pline[pline.find(".") + 1 : pline.find("(")]
+                _cmd = pline[pline.find(".") + 1: pline.find("(")]
                 if _cmd not in HBNBCommand.dot_cmds:
                     raise Exception
 
                 # If parentheses contain arguments, parse them
-                pline = pline[pline.find("(") + 1 : pline.find(")")]
+                pline = pline[pline.find("(") + 1: pline.find(")")]
                 if pline:
                     # Partition args: (<id>, [<delim>], [<*args>])
                     pline = pline.partition(", ")
@@ -127,14 +130,18 @@ class HBNBCommand(cmd.Cmd):
         Returns:
             bool: The `stop` parameter value passed to the method.
         """
-        # New variable to store the interactivity status of the standard input
-        is_interactive = sys.__stdin__.isatty()
+        try:
+            # New variable to store the interactivity
+            # status of the standard input
+            is_interactive = sys.__stdin__.isatty()
 
-        # Check if the standard input is not interactive
-        if not is_interactive:
-            print("(hbnb) ", end="")
+            # Check if the standard input is not interactive
+            if not is_interactive:
+                print("(hbnb) ", end="")
 
-        return stop
+            return stop
+        except Exception as e:
+            print(f"An error occurred: {e}")
 
     def do_quit(self, command):
         """
@@ -147,7 +154,10 @@ class HBNBCommand(cmd.Cmd):
         Returns:
             None
         """
-        exit()
+        try:
+            exit()
+        except Exception as e:
+            print(f"An error occurred: {e}")
 
     def help_quit(self):
         """
@@ -200,31 +210,43 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, args):
-        """Create an object of any class"""
-        try:
-            if not args:
-                raise SyntaxError()
-            arg_list = args.split(" ")
-            kw = {}
-            for arg in arg_list[1:]:
-                arg_splited = arg.split("=")
-                arg_splited[1] = eval(arg_splited[1])
-                if type(arg_splited[1]) is str:
-                    arg_splited[1] = (
-                        arg_splited[1].replace("_", " ").replace('"', '\\"')
-                    )
-                kw[arg_splited[0]] = arg_splited[1]
-        except SyntaxError:
-            print("** class name missing **")
-        except NameError:
-            print("** class doesn't exist **")
-        else:
-            if arg_list[0] not in self.classes:
-                print("** class doesn't exist **")
-            else:
-                new_instance = self.classes[arg_list[0]](**kw)
-                new_instance.save()
-                print(new_instance.id)
+        """
+        Create an object of any class.
+
+        Parameters:
+            self: The instance of the `HBNBCommand` class.
+            args (str): The arguments passed to the command.
+
+        Returns:
+            None
+        """
+        var1 = "** class name missing **"
+        var2 = "** class doesn't exist **"
+
+        if not args:
+            print(var1)
+            return
+
+        arg_list = args.split(" ")
+        class_name = arg_list[0]
+        if class_name not in HBNBCommand.classes:
+            print(var2)
+            return
+
+        kw = {}
+        for arg in arg_list[1:]:
+            key, value = arg.split("=")
+            try:
+                value = eval(value)
+            except NameError:
+                pass
+            if isinstance(value, str):
+                value = value.replace("_", " ").replace('"', '\\"')
+            kw[key] = value
+
+        new_instance = HBNBCommand.classesclass_name
+        new_instance.save()
+        print(new_instance.id)
 
     def help_create(self):
         """
@@ -358,22 +380,26 @@ class HBNBCommand(cmd.Cmd):
         Returns:
             None
         """
-        print_list = []
-        var1 = "** class doesn't exist **"
+        try:
+            print_list = []
+            var1 = "** class doesn't exist **"
 
-        if args:
-            class_name = args.split(" ")[0]  # remove possible trailing args
-            if class_name not in HBNBCommand.classes:
-                print(var1)
-                return
-            objects = storage.all(HBNBCommand.classes[class_name])
-        else:
-            objects = storage.all()
+            if args:
+                class_name = args.split(" ")[0]
+                # remove possible trailing args
+                if class_name not in HBNBCommand.classes:
+                    print(var1)
+                    return
+                objects = storage.all(HBNBCommand.classes[class_name])
+            else:
+                objects = storage.all()
 
-        for k, v in objects.items():
-            print_list.append(str(v))
+            for k, v in objects.items():
+                print_list.append(str(v))
 
-        print(print_list)
+            print(print_list)
+        except Exception as e:
+            print(f"An error occurred: {e}")
 
     def help_all(self):
         """
@@ -402,12 +428,15 @@ class HBNBCommand(cmd.Cmd):
         Returns:
             None
         """
-        count = 0
+        try:
+            count = 0
 
-        for t, v in storage._FileStorage__objects.items():
-            if args == t.split(".")[0]:
-                count += 1
-        print(count)
+            for t, v in storage._FileStorage__objects.items():
+                if args == t.split(".")[0]:
+                    count += 1
+            print(count)
+        except Exception as e:
+            print(f"An error occurred: {e}")
 
     def help_count(self):
         """
@@ -480,7 +509,7 @@ class HBNBCommand(cmd.Cmd):
             if args and args[0] == '"':  # check for quoted arg
                 second_quote = args.find('"', 1)
                 att_name = args[1:second_quote]
-                args = args[second_quote + 1 :]
+                args = args[second_quote + 1:]
 
             args = args.partition(" ")
 
@@ -489,7 +518,7 @@ class HBNBCommand(cmd.Cmd):
                 att_name = args[0]
             # check for quoted val arg
             if args[2] and args[2][0] == '"':
-                att_val = args[2][1 : args[2].find('"', 1)]
+                att_val = args[2][1: args[2].find('"', 1)]
 
             # if att_val was not quoted arg
             if not att_val and args[2]:
